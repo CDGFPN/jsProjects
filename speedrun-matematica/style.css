@@ -108,6 +108,7 @@ label{
     font-size: 24px;
 }
 
+.item-footer,
 .selection-footer{
     top: 134px;
     width: 100%;
@@ -160,4 +161,31 @@ button:active{
     height: 80px;
     margin: 0 50px;
     user-select: none;
+}
+
+.selected-item{
+    background: var(--select-color);
+    position: fixed;
+    top: 443px;
+    z-index: -1;
+    width: 529px;
+    height: 80px;
+}
+
+.item-footer{
+    top:1px;
+}
+
+.wrong,
+.right{
+    width: 40%;
+}
+
+.wrong{
+    background: var(--danger);
+    margin-right: 25px;
+}
+
+.right{
+    background-color: var(--success);
 }
