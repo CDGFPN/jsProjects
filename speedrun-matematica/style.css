@@ -96,8 +96,9 @@ label{
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    font-size: 16px;
-    max-width: fit-content;
+    font-size: 14px;
+    font-weight: 500;
+    max-width:fit-content;
 }
 
 .best-score span{
