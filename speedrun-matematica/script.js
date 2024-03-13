@@ -29,62 +29,94 @@ let equationsArray = [];
 // Página do jogo (para funções de criação de equações)
 let firstNumber = 0;
 let secondNumber = 0;
-let equationObject = {}
-const wrongFormat = []
+let equationObject = {};
+const wrongFormat = [];
 
-function getRandomInt(max){
-    return Math.floor(Math.random() * Math.floor(max));
+// Mostrar página de jogo
+function showGamePage() {
+  countdownPage.hidden = true;
+  gamePage.hidden = false;
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
 }
 
 // Funções para criar as equações
-function createEquations(){
-    const wrongEquations = getRandomInt(questionsAmount);
-    const correctEquations = questionsAmount - wrongEquations
+function createEquations() {
+  const wrongEquations = getRandomInt(questionsAmount);
+  const correctEquations = questionsAmount - wrongEquations;
 
-    for(let i =0; i< correctEquations; i++){
-        firstNumber = getRandomInt(9);
-        secondNumber = getRandomInt(9);
-        const equationValue = firstNumber * secondNumber
-        const equation = `${firstNumber} x ${secondNumber} = ${equationValue}`
-        equationObject = {value:equation, evaluated: 'true'}
-        equationsArray.push(equationObject)
-    }
+  for (let i = 0; i < correctEquations; i++) {
+    firstNumber = getRandomInt(9);
+    secondNumber = getRandomInt(9);
+    const equationValue = firstNumber * secondNumber;
+    const equation = `${firstNumber} x ${secondNumber} = ${equationValue}`;
+    equationObject = { value: equation, evaluated: "true" };
+    equationsArray.push(equationObject);
+  }
 
-    for(let i =0; i < wrongEquations; i++){
-        firstNumber = getRandomInt(9);
-        secondNumber = getRandomInt(9);
-        const equationValue = firstNumber * secondNumber;
-        wrongFormat[0] = `${firstNumber} * ${secondNumber + getRandomInt(3)+1} = ${equationValue}`
-        wrongFormat[1] = `${firstNumber} * ${secondNumber} = ${equationValue + getRandomInt(3)+1}`
-        wrongFormat[2] = `${firstNumber+ getRandomInt(3)+1}  * ${secondNumber} = ${equationValue}`
-        const formatChoice = getRandomInt(wrongFormat.length)
-        const equation = wrongFormat[formatChoice]
-        equationObject = {value: equation, evaluated:'false'}
-        equationsArray.push(equationObject)
+  for (let i = 0; i < wrongEquations; i++) {
+    firstNumber = getRandomInt(9);
+    secondNumber = getRandomInt(9);
+    const equationValue = firstNumber * secondNumber;
+    wrongFormat[0] = `${firstNumber} * ${
+      secondNumber + getRandomInt(3) + 1
+    } = ${equationValue}`;
+    wrongFormat[1] = `${firstNumber} * ${secondNumber} = ${
+      equationValue + getRandomInt(3) + 1
+    }`;
+    wrongFormat[2] = `${
+      firstNumber + getRandomInt(3) + 1
+    }  * ${secondNumber} = ${equationValue}`;
+    const formatChoice = getRandomInt(wrongFormat.length);
+    const equation = wrongFormat[formatChoice];
+    equationObject = { value: equation, evaluated: "false" };
+    equationsArray.push(equationObject);
+  }
+  shuffle(equationsArray);
+}
 
-    }
+//Adiciona equações para o DOM
+function equationsToDOM() {
+  equationsArray.forEach((equation) => {
+    const item = document.createElement("div");
+    item.classList.add("item");
+    const equationText = document.createElement("h1");
+    equationText.textContent = equation.value;
+    console.log(equationText);
+    item.appendChild(equationText);
+    itemContainer.appendChild(item);
+  });
 }
 
 // Inicia contagem regressiva
 function countdownStart() {
-  let cd = Number(countdown.textContent)-1;
-  
-  const intervalId = setInterval(()=>{
-    if(cd>0){
+  return new Promise((resolve, reject) => {
+    let cd = Number(countdown.textContent) - 1;
+
+    const intervalId = setInterval(() => {
+      if (cd > 0) {
         countdown.textContent = cd;
         cd--;
-    }else{
-        countdown.textContent = 'GO!'
-        clearInterval(intervalId)
-    }
-  }, 1000)
+      } else {
+        countdown.textContent = "GO!";
+        clearInterval(intervalId);
+        resolve();
+      }
+    }, 1000);
+  });
 }
 
 // Navegar da Tela Inicial para tela de contagem regressiva
 function showCountDown() {
   countdownPage.hidden = false;
   splashPage.hidden = true;
-  countdownStart();
+  countdownStart().then(() => {
+    createEquations();
+    showGamePage();
+    equationsToDOM();
+  });
 }
 
 // Pega o valor do input radio selecionado
