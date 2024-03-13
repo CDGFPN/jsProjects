@@ -192,6 +192,15 @@ button:active{
     background-color: var(--success);
 }
 
+/* PAGINA DE CONTAGEM REGRESSIVA */
+.countdown{
+    margin-top: 45%;
+    font-size: 100px;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+}
+
 /* PAGINA DE PONTUAÇÃO */
 
 .score-container{

@@ -25,24 +25,46 @@ const playAgainBtn = document.querySelector(".play-again");
 //
 let questionsAmount = 0;
 
+// Inicia contagem regressiva
+function countdownStart() {
+  let cd = Number(countdown.textContent)-1;
+  
+  const intervalId = setInterval(()=>{
+    if(cd>0){
+        countdown.textContent = cd;
+        cd--;
+    }else{
+        countdown.textContent = 'GO!'
+        clearInterval(intervalId)
+    }
+  }, 1000)
+}
+
+// Navegar da Tela Inicial para tela de contagem regressiva
+function showCountDown() {
+  countdownPage.hidden = false;
+  splashPage.hidden = true;
+  countdownStart();
+}
 
 // Pega o valor do input radio selecionado
-function getRadioValue(){
-    let radioValue;
-    radioInputs.forEach((radioInput)=>{
-        if(radioInput.checked){
-            radioValue = Number(radioInput.value)
-        }
-    })
-    return radioValue;
+function getRadioValue() {
+  let radioValue;
+  radioInputs.forEach((radioInput) => {
+    if (radioInput.checked) {
+      radioValue = Number(radioInput.value);
+    }
+  });
+  return radioValue;
 }
 
 // Função pra decidir a quantidade de questões
-function selectQuestionAmount(e){
-    e.preventDefault();
-    questionsAmount = getRadioValue();
-    console.log(`qtd: ${questionsAmount}`);
-
+function selectQuestionAmount(e) {
+  e.preventDefault();
+  questionsAmount = getRadioValue();
+  if (questionsAmount !== undefined) {
+    showCountDown();
+  }
 }
 
 startForm.addEventListener("click", () => {
@@ -55,4 +77,4 @@ startForm.addEventListener("click", () => {
   });
 });
 
-startForm.addEventListener('submit', selectQuestionAmount)
+startForm.addEventListener("submit", selectQuestionAmount);
