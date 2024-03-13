@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com?family=Oxanium|PT+Mono&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&family=PT+Mono&display=swap");
 
 *{
     box-sizing: border-box;
@@ -141,4 +141,23 @@ button:active{
 .start{
     width: 90%;
     background: var(--primary-color);
+}
+
+.item-container{
+    height: 552px;
+    overflow-y: scroll;
+    position: relative;
+}
+
+.item-container::-webkit-scrollbar{
+    display: none;
+}
+
+.item{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    height: 80px;
+    margin: 0 50px;
+    user-select: none;
 }
