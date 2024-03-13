@@ -22,8 +22,48 @@ const baseTimeEl = document.querySelector(".base-time");
 const penaltyTimeEl = document.querySelector(".penalty-time");
 const playAgainBtn = document.querySelector(".play-again");
 
-//
+// Equações
 let questionsAmount = 0;
+let equationsArray = [];
+
+// Página do jogo (para funções de criação de equações)
+let firstNumber = 0;
+let secondNumber = 0;
+let equationObject = {}
+const wrongFormat = []
+
+function getRandomInt(max){
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
+// Funções para criar as equações
+function createEquations(){
+    const wrongEquations = getRandomInt(questionsAmount);
+    const correctEquations = questionsAmount - wrongEquations
+
+    for(let i =0; i< correctEquations; i++){
+        firstNumber = getRandomInt(9);
+        secondNumber = getRandomInt(9);
+        const equationValue = firstNumber * secondNumber
+        const equation = `${firstNumber} x ${secondNumber} = ${equationValue}`
+        equationObject = {value:equation, evaluated: 'true'}
+        equationsArray.push(equationObject)
+    }
+
+    for(let i =0; i < wrongEquations; i++){
+        firstNumber = getRandomInt(9);
+        secondNumber = getRandomInt(9);
+        const equationValue = firstNumber * secondNumber;
+        wrongFormat[0] = `${firstNumber} * ${secondNumber + getRandomInt(3)+1} = ${equationValue}`
+        wrongFormat[1] = `${firstNumber} * ${secondNumber} = ${equationValue + getRandomInt(3)+1}`
+        wrongFormat[2] = `${firstNumber+ getRandomInt(3)+1}  * ${secondNumber} = ${equationValue}`
+        const formatChoice = getRandomInt(wrongFormat.length)
+        const equation = wrongFormat[formatChoice]
+        equationObject = {value: equation, evaluated:'false'}
+        equationsArray.push(equationObject)
+
+    }
+}
 
 // Inicia contagem regressiva
 function countdownStart() {
