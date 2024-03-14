@@ -78,8 +78,8 @@
             </div>
             <!-- Botões de certo e errado-->
             <div class="item-footer">
-                <button class="wrong">Errado</button>
-                <button class="right">Certo</button>
+                <button class="wrong" onclick="select(false)">Errado</button>
+                <button class="right" onclick="select(true)">Certo</button>
             </div>
         </div>
 
@@ -87,14 +87,14 @@
         <div class="card" id="score-page" hidden>
             <!-- Container pontuação -->
             <div class="score-container">
-                <h1 class="title">Seu tempo</h1>
-                <h1 class="final-time">3.4s</h1>
-                <h1 class="base-time">Tempo base: 2.4s</h1>
-                <h1 class="penalty-time">Penalidade: +1.0s</h1>
+                <h1 class="title">Seu Tempo</h1>
+                <h1 class="final-time"></h1>
+                <h1 class="base-time"></h1>
+                <h1 class="penalty-time"></h1>
             </div>
             <!-- Botão Jogar novamente -->
             <div class="score-footer">
-                <button class="play-again">Jogar Novamente</button>
+                <button class="play-again" onclick="playAgain()">Jogar Novamente</button>
             </div>
         </div>
     </div>

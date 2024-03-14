@@ -146,6 +146,18 @@ button:active{
     background: var(--primary-color);
 }
 
+/* PÁGINA DO JOGO */
+
+.height-240{
+    height: 240px;
+    width: 100%;
+}
+
+.height-500{
+    height: 500px;
+    width: 100%;
+}
+
 .item-container{
     height: 552px;
     overflow-y: scroll;
@@ -216,7 +228,7 @@ button:active{
     height: 90px;
     display: flex;
     justify-content: center;
-    position: relative;
+    position:relative;
     top: -30px;
 }
 
@@ -225,7 +237,7 @@ button:active{
 }
 
 .final-time{
-    font-size:100px;
+    font-size: 100px;
     margin:0;
     color:var(--success);
 }

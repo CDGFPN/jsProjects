@@ -25,6 +25,7 @@ const playAgainBtn = document.querySelector(".play-again");
 // Equações
 let questionsAmount = 0;
 let equationsArray = [];
+let playerGuesses = [];
 
 // Página do jogo (para funções de criação de equações)
 let firstNumber = 0;
@@ -32,10 +33,127 @@ let secondNumber = 0;
 let equationObject = {};
 const wrongFormat = [];
 
+// Cronometro
+let timer;
+let timePlayed = 0;
+let baseTime = 0;
+let penaltyTime = 0;
+let finalTime = 0;
+let finalDisplayTime = "0.0s";
+
+//Rolar da tela
+let valueY = 0;
+
+// Reinicia o jogo
+function playAgain() {
+  gamePage.addEventListener("click", startTimer);
+  scorePage.hidden = true;
+  splashPage.hidden = false;
+  countdown.textContent = "3";
+  equationsArray = [];
+  playerGuesses = [];
+  valueY = 0;
+  radioContainers[checkedRadioIndex].classList.remove("selected-label")
+}
+
+function showScorePage() {
+  gamePage.hidden = true;
+  scorePage.hidden = false;
+  playAgainBtn.disabled = true;
+  setTimeout(() => {
+    playAgainBtn.disabled = false;
+  }, 1000);
+}
+
+// Formatar e mostrar tempo no DOM
+function scoresToDom() {
+  finalDisplayTime = finalTime.toFixed(1);
+  baseTime = timePlayed.toFixed(1);
+  penaltyTime = penaltyTime.toFixed(1);
+
+  baseTimeEl.textContent = `Tempo base: ${baseTime}s`;
+  penaltyTimeEl.textContent = `Penalidade: +${penaltyTime}s`;
+  finalTimeEl.textContent = `${finalDisplayTime}s`;
+  showScorePage();
+}
+
+//Parar o cronometro e processar os resultados, ir para página de pontuação
+function checkTime() {
+  if (playerGuesses.length == questionsAmount) {
+    clearInterval(timer);
+    checkWrongGuesses();
+    scoresToDom();
+  }
+}
+
+//Verifica as questões erradas
+function checkWrongGuesses() {
+  playerGuesses.forEach((e, i) => {
+    let object = equationsArray[i];
+    if (e !== object.evaluated) {
+      penaltyTime += 0.5;
+    }
+  });
+  finalTime = timePlayed + penaltyTime;
+}
+
+//Adiciona 1/10s para timePlayed
+function addTime() {
+  timePlayed += 0.1;
+  checkTime();
+}
+
+// Inicia cronometro quando a pagina do jogo é clicada
+function startTimer() {
+  //reinicia tempos
+  timePlayed = 0;
+  penaltyTime = 0;
+  finalTime = 0;
+  timer = setInterval(addTime, 100);
+  gamePage.removeEventListener("click", startTimer);
+}
+
+// Rolar e armazenar a seleção do usuário em playerGuesses
+function select(guessedTrue) {
+  //Rolar 80px por vez
+  valueY += 80;
+  itemContainer.scroll(0, valueY);
+
+  //adiciona resposta do jogador pro array
+  return guessedTrue ? playerGuesses.push("true") : playerGuesses.push("false");
+}
+
 // Mostrar página de jogo
 function showGamePage() {
   countdownPage.hidden = true;
   gamePage.hidden = false;
+  itemContainer.scrollTop = 0;
+}
+
+// Adiciona dinamicamente equações corretas/erradas
+function populateGamePage() {
+  //Reseta o DOM, colocar espaço vazio acima
+  itemContainer.textContent = "";
+
+  //Espaçador
+  const topSpacer = document.createElement("div");
+  topSpacer.classList.add("height-240");
+
+  //Item selecionado
+  const selectedItem = document.createElement("div");
+  selectedItem.classList.add("selected-item");
+
+  //Anexar
+  itemContainer.append(topSpacer, selectedItem);
+
+  //Criar equações e elemenntos no DOM
+  createEquations();
+  equationsToDOM();
+
+  // Colocar outro espaço vazio em baixo
+  const bottomSpacer = document.createElement("div");
+  bottomSpacer.classList.add("height-500");
+  itemContainer.appendChild(bottomSpacer);
 }
 
 function getRandomInt(max) {
@@ -84,7 +202,6 @@ function equationsToDOM() {
     item.classList.add("item");
     const equationText = document.createElement("h1");
     equationText.textContent = equation.value;
-    console.log(equationText);
     item.appendChild(equationText);
     itemContainer.appendChild(item);
   });
@@ -101,8 +218,10 @@ function countdownStart() {
         cd--;
       } else {
         countdown.textContent = "GO!";
-        clearInterval(intervalId);
-        resolve();
+        setTimeout(() => {
+          clearInterval(intervalId);
+          resolve();
+        }, 1000);
       }
     }, 1000);
   });
@@ -113,17 +232,18 @@ function showCountDown() {
   countdownPage.hidden = false;
   splashPage.hidden = true;
   countdownStart().then(() => {
-    createEquations();
     showGamePage();
-    equationsToDOM();
+    populateGamePage();
   });
 }
 
 // Pega o valor do input radio selecionado
+let checkedRadioIndex;
 function getRadioValue() {
   let radioValue;
-  radioInputs.forEach((radioInput) => {
+  radioInputs.forEach((radioInput, index) => {
     if (radioInput.checked) {
+      checkedRadioIndex = index;
       radioValue = Number(radioInput.value);
     }
   });
@@ -145,8 +265,11 @@ startForm.addEventListener("click", () => {
     if (radioEl.children[1].checked) {
       radioEl.classList.add("selected-label");
     }
-    //adiciona estilo de selecionado se for escolhido
   });
 });
 
 startForm.addEventListener("submit", selectQuestionAmount);
+gamePage.addEventListener("click", startTimer);
+gamePage.addEventListener('wheel', function(e) {
+  e.preventDefault();
+}, { passive: false });
