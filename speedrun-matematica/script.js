@@ -26,6 +26,7 @@ const playAgainBtn = document.querySelector(".play-again");
 let questionsAmount = 0;
 let equationsArray = [];
 let playerGuesses = [];
+let bestScoreArray = [];
 
 // Página do jogo (para funções de criação de equações)
 let firstNumber = 0;
@@ -39,10 +40,47 @@ let timePlayed = 0;
 let baseTime = 0;
 let penaltyTime = 0;
 let finalTime = 0;
-let finalDisplayTime = "0.0s";
+let finalDisplayTime = "0.0";
 
 //Rolar da tela
 let valueY = 0;
+
+// atualiza as melhores pontuações da tela inicial
+function bestScoresToDOM() {
+  bestScores.forEach((e, i) => {
+    e.textContent = `${bestScoreArray[i].bestScore}s`;
+  });
+}
+
+// Checar localstorage para as melhores pontuações, seta bestScoreArray
+function getSavedBestScores() {
+  if (localStorage.getItem("bestScores")) {
+    bestScoreArray = JSON.parse(localStorage.bestScores);
+  } else {
+    bestScoreArray = [
+      { questions: 10, bestScore: finalDisplayTime },
+      { questions: 25, bestScore: finalDisplayTime },
+      { questions: 50, bestScore: finalDisplayTime },
+      { questions: 99, bestScore: finalDisplayTime },
+    ];
+    localStorage.setItem("bestScores", JSON.stringify(bestScoreArray));
+  }
+  bestScoresToDOM();
+}
+
+// Atualizar bestScoreArray
+function updateBestScore() {
+  bestScoreArray.forEach((score, index) => {
+    if (questionsAmount == score.questions) {
+      const savedBestScore = Number(bestScoreArray[index].bestScore);
+      if (savedBestScore === 0 || savedBestScore > finalTime) {
+        bestScoreArray[index].bestScore = finalDisplayTime;
+      }
+    }
+  });
+  bestScoresToDOM();
+  localStorage.setItem('bestScores', JSON.stringify(bestScoreArray))
+}
 
 // Reinicia o jogo
 function playAgain() {
@@ -53,7 +91,7 @@ function playAgain() {
   equationsArray = [];
   playerGuesses = [];
   valueY = 0;
-  radioContainers[checkedRadioIndex].classList.remove("selected-label")
+  radioContainers[checkedRadioIndex].classList.remove("selected-label");
 }
 
 function showScorePage() {
@@ -74,6 +112,7 @@ function scoresToDom() {
   baseTimeEl.textContent = `Tempo base: ${baseTime}s`;
   penaltyTimeEl.textContent = `Penalidade: +${penaltyTime}s`;
   finalTimeEl.textContent = `${finalDisplayTime}s`;
+  updateBestScore();
   showScorePage();
 }
 
@@ -270,6 +309,11 @@ startForm.addEventListener("click", () => {
 
 startForm.addEventListener("submit", selectQuestionAmount);
 gamePage.addEventListener("click", startTimer);
-gamePage.addEventListener('wheel', function(e) {
-  e.preventDefault();
-}, { passive: false });
+gamePage.addEventListener(
+  "wheel",
+  function (e) {
+    e.preventDefault();
+  },
+  { passive: false }
+);
+getSavedBestScores();
